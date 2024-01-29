@@ -2,7 +2,7 @@ import React from "react";
 import { Image, TouchableOpacity, StyleSheet, Text } from "react-native";
 
 
-const SpecialButton = ({ title, onPress }) => {
+const SpecialButton = ({ onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.buttonContainer}>
       <Image 

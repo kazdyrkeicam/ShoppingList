@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import ShoppingList from './ShoppingList';
+import ListItem from './ListItem';
 import AddItem from './AddItem';
-import { FlatList, View, Text, Image, StyleSheet } from 'react-native';
+import { FlatList, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import SectionBar from "./SectionBar";
 
 
 
@@ -13,6 +14,12 @@ const Main = () => {
       ...currentItems,
       { id: new Date().getTime().toString(), value: itemTitle }
     ])
+  };
+
+  const removeItemHandler = (itemId) => {
+    setListItems(currentItems => {
+      return currentItems.filter(item => item.id !== itemId);
+    });
   };
 
 
@@ -32,12 +39,15 @@ const Main = () => {
         
       />
 
+      <SectionBar />
+
       <FlatList
         data={listItems}
         renderItem={itemData => (
-          <ShoppingList
+          <ListItem
             id={itemData.item.id}
             title={itemData.item.value}
+            onDelete={removeItemHandler}
           />
         )}
       />
