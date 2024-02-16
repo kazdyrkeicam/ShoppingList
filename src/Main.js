@@ -5,40 +5,36 @@ import { FlatList, View, Text, Image, StyleSheet, TouchableOpacity } from 'react
 import SectionBar from "./SectionBar";
 
 
+const ACTIVE_SECTION = 'active';
+
 
 const Main = () => {
   const [listItemsActive, setListItemsActive] = useState([]);
   const [listItemsTaken, setListItemsTaken] = useState([]);
-  const [currentSection, setCurrentSection] = useState('active');
+  const [currentSection, setCurrentSection] = useState(ACTIVE_SECTION);
 
 
   const addItemHandler = (itemTitle) => {
-    if (currentSection === 'active') {
-      setListItemsActive(prevList => [
-        ...prevList,
-        { id: new Date().getTime().toString(), value: itemTitle }
-      ]);
-    }
-    else {
-      setListItemsTaken(prevList => [
-        ...prevList,
-        { id: new Date().getTime().toString(), value: itemTitle }
-      ]);
-    }
+    setListItemsActive(prevList => [
+      ...prevList,
+      { id: new Date().getTime().toString(), value: itemTitle }
+    ]);
   };
 
 
 
   const removeItemHandler = (itemId) => {
-    if (currentSection === 'active') {
-      setListItemsActive(prevList => {
-        prevList.filter(item => item.id !== itemId)
-      });
+    if (currentSection === ACTIVE_SECTION) {
+      const removedItem = listItemsActive.find(item => item.id === itemId);
+      
+      setListItemsActive(prevList => prevList.filter(item => item.id !== itemId));
+      setListItemsTaken(prevList => [...prevList, removedItem]);
     }
     else {
-      setListItemsTaken(prevList => {
-        prevList.filter(item => item.id !== itemId)
-      });
+      const removedItem = listItemsTaken.find(item => item.id === itemId);
+
+      setListItemsTaken(prevList => prevList.filter(item => item.id !== itemId));
+      setListItemsActive(prevList => [...prevList, removedItem]);
     }
   };
 
@@ -60,7 +56,7 @@ const Main = () => {
 
       <SectionBar setActiveSection={setCurrentSection}/>
 
-      {currentSection === 'active' 
+      {currentSection === ACTIVE_SECTION
       ? 
       (
         <FlatList
