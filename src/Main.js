@@ -7,19 +7,39 @@ import SectionBar from "./SectionBar";
 
 
 const Main = () => {
-  const [listItems, setListItems] = useState([]);
+  const [listItemsActive, setListItemsActive] = useState([]);
+  const [listItemsTaken, setListItemsTaken] = useState([]);
+  const [currentSection, setCurrentSection] = useState('active');
+
 
   const addItemHandler = (itemTitle) => {
-    setListItems(currentItems => [
-      ...currentItems,
-      { id: new Date().getTime().toString(), value: itemTitle }
-    ])
+    if (currentSection === 'active') {
+      setListItemsActive(prevList => [
+        ...prevList,
+        { id: new Date().getTime().toString(), value: itemTitle }
+      ]);
+    }
+    else {
+      setListItemsTaken(prevList => [
+        ...prevList,
+        { id: new Date().getTime().toString(), value: itemTitle }
+      ]);
+    }
   };
 
+
+
   const removeItemHandler = (itemId) => {
-    setListItems(currentItems => {
-      return currentItems.filter(item => item.id !== itemId);
-    });
+    if (currentSection === 'active') {
+      setListItemsActive(prevList => {
+        prevList.filter(item => item.id !== itemId)
+      });
+    }
+    else {
+      setListItemsTaken(prevList => {
+        prevList.filter(item => item.id !== itemId)
+      });
+    }
   };
 
 
@@ -36,21 +56,38 @@ const Main = () => {
       
       <AddItem
         onAddItem={addItemHandler}
-        
       />
 
-      <SectionBar />
+      <SectionBar setActiveSection={setCurrentSection}/>
 
-      <FlatList
-        data={listItems}
-        renderItem={itemData => (
-          <ListItem
-            id={itemData.item.id}
-            title={itemData.item.value}
-            onDelete={removeItemHandler}
-          />
-        )}
-      />
+      {currentSection === 'active' 
+      ? 
+      (
+        <FlatList
+          data={listItemsActive}
+          renderItem={itemData => (
+            <ListItem
+              id={itemData.item.id}
+              title={itemData.item.value}
+              onDelete={removeItemHandler}
+            />
+          )}
+        />
+      ) 
+      : 
+      (
+        <FlatList
+          data={listItemsTaken}
+          renderItem={itemData => (
+            <ListItem
+              id={itemData.item.id}
+              title={itemData.item.value}
+              onDelete={removeItemHandler}
+            />
+          )}
+        />
+      )}
+    
     </View>
   );
 }

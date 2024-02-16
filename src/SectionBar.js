@@ -2,15 +2,27 @@ import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 
-const SectionBar = () => {
+const SectionBar = ({ setActiveSection }) => {
+
+  const handleSectionChange = section => {
+    setActiveSection(section);
+  }
+
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => handleSectionChange('active')}
+      >
+        
         <Text>Aktywne</Text>
       </TouchableOpacity>
       <View style={styles.line}></View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => handleSectionChange('taken')}
+      >
         <Text>Wybrane</Text>
       </TouchableOpacity>
     </View>
