@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import SpecialButton from './SpecialButton';
 
 
 
 const ListItem = ( props ) => {
-  const [strikeState, setStrikeState] = useState(false)
-
-
   return (
     <TouchableOpacity
-      onLongPress={props.onDelete.bind(this, props.id)}
-      onPress={() => setStrikeState(!strikeState)}
+      onLongPress={props.onPermDelete.bind(this, props.id)}
+      onPress={props.onDelete.bind(this, props.id)}
     >
       <View style={styles.item}>
-        <Text style={[
-          strikeState ? styles.strikeItemText : styles.itemText
-        ]}>
-          <Text>{props.title}</Text>
-        </Text>
+        <Text style={styles.itemText}>{props.title}</Text>
+        <SpecialButton onPress={props.onPermDelete.bind(this, props.id)}/>
       </View>
     </TouchableOpacity>
   );

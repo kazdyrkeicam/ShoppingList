@@ -39,6 +39,20 @@ const Main = () => {
   };
 
 
+  const removeItemPermanentlyHandler = itemId => {
+    console.log("here we are");
+    if (currentSection === ACTIVE_SECTION) {
+      setListItemsActive((prevList) =>
+        prevList.filter((item) => item.id !== itemId)
+      );
+    } else {
+      setListItemsTaken((prevList) =>
+        prevList.filter((item) => item.id !== itemId)
+      );
+    }
+  }
+
+
   return (
     <View style={styles.container}>
 
@@ -50,10 +64,7 @@ const Main = () => {
         <Text style={styles.title}>Shopping List</Text>
       </View>
       
-      <AddItem
-        onAddItem={addItemHandler}
-      />
-
+      <AddItem onAddItem={addItemHandler}/>
       <SectionBar setActiveSection={setCurrentSection}/>
 
       {currentSection === ACTIVE_SECTION
@@ -66,6 +77,7 @@ const Main = () => {
               id={itemData.item.id}
               title={itemData.item.value}
               onDelete={removeItemHandler}
+              onPermDelete={removeItemPermanentlyHandler}
             />
           )}
         />
@@ -79,6 +91,7 @@ const Main = () => {
               id={itemData.item.id}
               title={itemData.item.value}
               onDelete={removeItemHandler}
+              onPermDelete={removeItemPermanentlyHandler}
             />
           )}
         />
