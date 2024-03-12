@@ -1,0 +1,31 @@
+{
+  "language": "English",
+  "screens": {
+    "list": {
+      "title": "Shopping List",
+      "search-bar": {
+        "place-holder": "Search for items..."
+      },
+      "section-bar": {
+        "active": "Active",
+        "chosen": "Chosen"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "language-section": "Languages",
+      "exit": "Exit"
+    }
+  },
+  "categories": {
+    "fruits": "Fruits",
+    "meat": "Meat",
+    "bakery": "Bakery"
+  },
+  "products": {
+    "apple": "Apple",
+    "banana": "Banana",
+    "kiwi": "Kiwi",
+    "fish": "Fish"
+  }
+}

@@ -1,45 +1,60 @@
 import React, { useState } from "react";
-import { TextInput, View, StyleSheet, FlatList, Text } from "react-native";
+import {
+  TextInput,
+  View,
+  StyleSheet,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Button,
+} from "react-native";
 import SpecialButton from "./SpecialButton";
-import { TouchableOpacity, ScrollView } from "react-native-web";
+import { useTranslation } from "react-i18next";
 import SearchItem from "./SearchItem";
-import styles from "./Styles";
-
-
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const categories = [
-  { id: '1', name: 'Fruits' },
-  { id: '2', name: 'Meat' },
-  { id: '3', name: 'Bakery' },
+  { id: "1", name: { en: "Fruits", pl: "Owoce" } },
+  { id: "2", name: { en: "Meat", pl: "Mięso" } },
+  { id: "3", name: { en: "Bakery", pl: "Pieczywo" } },
 ];
 
 const products = [
-  { id: '1', name: 'Apple', category_id: '1' },
-  { id: '2', name: 'Banana', category_id: '1' },
-  { id: '3', name: 'Kiwi', category_id: '1' },
-  { id: '4', name: 'Fish', category_id: '2' },
-  { id: '5', name: 'Beef', category_id: '2' },
-  { id: '6', name: 'Pork', category_id: '2' },
-  { id: '7', name: 'Bread', category_id: '3' },
+  { id: "1", name: { en: "Apple", pl: "Jabłko" }, category_id: "1" },
+  { id: "2", name: { en: "Banana", pl: "Banan" }, category_id: "1" },
+  { id: "3", name: { en: "Kiwi", pl: "Kiwi" }, category_id: "1" },
+  { id: "4", name: { en: "Fish", pl: "Ryba" }, category_id: "2" },
+  { id: "5", name: { en: "Beef", pl: "Wołowina" }, category_id: "2" },
+  { id: "6", name: { en: "Pork", pl: "Wieprzowina" }, category_id: "2" },
+  { id: "7", name: { en: "Bread", pl: "Chleb" }, category_id: "3" },
 ];
 
-const validateItemName = name => {
-  if (name.length === 0) return false;
-  return products.some(item => item.name.toLowerCase() === name.toLowerCase());
-}
+export default function AddItem(props) {
+  const { t } = useTranslation();
 
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
+  const [itemName, setItemName] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(true);
+  const [filteredProducts, setFilteredProducts] = useState(products);
 
+  const TryFindValidateItem = (name) => {
+    if (name.length === 0) return null;
 
-export default function AddItem( props ) {
-  const [itemName, setItemName] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+    return (
+      products.find(
+        (item) => item.name[props.language].toLowerCase() === name.toLowerCase()
+      ) || null
+    );
+  };
 
   const itemAddHandler = () => {
-    if (!validateItemName(itemName)) return;
+    let productFound = TryFindValidateItem(itemName);
 
-    props.onAddItem(itemName);
+    if (!productFound) return;
+
+    props.onAddItem(productFound);
     setItemName("");
 
     setShowSuggestions(false);
@@ -48,43 +63,99 @@ export default function AddItem( props ) {
   const handleInputChange = (text) => {
     setItemName(text);
 
-    const filteredItems = products.filter(item =>
-      item.name.toLowerCase().includes(text.toLowerCase())
+    const filteredItems = products.filter((item) =>
+      item.name[props.language].toLowerCase().includes(text.toLowerCase())
     );
 
     setFilteredProducts(filteredItems);
     setShowSuggestions(true);
   };
 
-  const handleSuggestionPress = product => {
+  const handleSuggestionPress = (product) => {
     setItemName(product);
     setShowSuggestions(false);
-  }
-
+  };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        placeholder="Search for items..."
-        value={itemName}
-        onChangeText={handleInputChange}
-        onFocus={() => setShowSuggestions(true)}
-        onBlur={() => setShowSuggestions(true)}
-        style={styles.inputTextItem}
-      />
-      {showSuggestions && (
-        <FlatList
-          data={filteredProducts}
-          renderItem={itemData => (
-            <SearchItem 
-              title={itemData.item.name}
-              onPress={handleSuggestionPress}
-            /> 
+    <SafeAreaView>
+      <TouchableOpacity
+        onPress={() => setIsAddModalVisible(true)}
+        style={props.style[0]}
+      >
+        <Text style={props.style[1]}>+</Text>
+      </TouchableOpacity>
+
+      <Modal visible={isAddModalVisible} animationType="slide">
+        <SafeAreaView style={styles.containerAddItems}>
+          <View style={styles.searchItems}>
+            <TextInput
+              placeholder={t("screens.list.search-bar.place-holder")}
+              value={itemName}
+              onChangeText={handleInputChange}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setShowSuggestions(true)}
+              style={styles.productInput}
+            />
+            <SpecialButton
+              onPress={itemAddHandler}
+              onSecondPress={() => setIsAddModalVisible(false)}
+              source="Add"
+              style={styles.addButton}
+            />
+          </View>
+
+          {showSuggestions && (
+            <FlatList
+              data={filteredProducts}
+              renderItem={(itemData) => (
+                <SearchItem
+                  title={itemData.item.name[props.language]}
+                  onPress={handleSuggestionPress}
+                  style={styles.suggestionItem}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+              style={styles.suggestionList}
+            />
           )}
-          keyExtractor={(item) => item.id}
-        />
-      )}
-      <SpecialButton onPress={itemAddHandler}/>
-    </View>
+        </SafeAreaView>
+      </Modal>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  containerAddItems: {
+    marginTop: 20,
+    flexDirection: "column",
+    flex: 1,
+  },
+  searchItems: {
+    flexDirection: "row",
+    alignContent: "flex-start",
+    // backgroundColor: "red",
+  },
+  productInput: {
+    flex: 2,
+    padding: 12,
+    margin: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "lightgray",
+    // backgroundColor: "yellow",
+  },
+  addButton: {
+    paddingHorizontal: 10,
+    alignSelf: "flex-end",
+  },
+  suggestionList: {
+    flex: 2,
+    // backgroundColor: "green",
+  },
+  suggestionItem: {
+    borderBottomWidth: 1,
+    borderColor: "lightgray",
+    padding: 15,
+    paddingHorizontal: 30,
+  },
+});
