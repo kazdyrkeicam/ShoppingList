@@ -1,24 +1,21 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from "react";
+import { FlatList, View, Text } from "react-native";
+import ListItem from "./ListItem";
 
-
-
-const ShoppingList = ( props ) => {
-
+const ShoppingList = (props) => {
   return (
-    <View style={styles.container}>
-      <Text>{props.title}</Text>
-    </View>
+    <FlatList
+      data={props.items}
+      renderItem={(itemData) => (
+        <ListItem
+          id={itemData.item.id}
+          title={itemData.item.name[props.language]}
+          onDelete={props.onDelete}
+          onPermDelete={props.onPermDelete}
+        />
+      )}
+    />
   );
-}
-
-
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-  },
-});
-
+};
 
 export default ShoppingList;
